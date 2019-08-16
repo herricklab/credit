@@ -6,6 +6,8 @@ library(tidyverse)
 library(gplots)
 library(caTools)
 library(e1071)
+library(caret)
+library(randomForest)
 # summary
 summary(training)
 
@@ -109,11 +111,22 @@ stacked_nb_predict %>% filter(ind==1) %>%
 
 #==========================================================
 #Random Forest
-library(randomForest)
+
 rf <- randomForest(training_set$SeriousDlqin2yrs~.,
                  data = training_set[,-1])
-rf_predict <- predict(rf, test, type="prob")
-rf_predict_plot <- as.data.frame(rf_predict)
+rf_predict_response <- predict(rf, test_set, type="response")
+rf_predict_array <- as.factor(as.vector(rf_predict_response))
+
+
+
+#create Confusion matrix
+confusion_matrix <- table(rf_predict_array,test_set$SeriousDlqin2yrs)
+accuracy <- (318+27745)/(27745+1687+250+318)
+
+
+#predict probability
+rf_predict_prob <- predict(rf, test, type="prob")
+rf_predict_plot <- as.data.frame(rf_predict_prob)
 
 # stack the dataset
 stacked_rf_predict <- stack(rf_predict_plot)
@@ -121,19 +134,23 @@ stacked_rf_predict <- stack(rf_predict_plot)
 # plot
 stacked_rf_predict %>% filter(ind==1) %>% 
   ggplot(aes(x=values)) + geom_histogram(bins = 50) + ggtitle("Random Forest") + 
-  theme(plot.title=element_text(hjust=0.5))
+  theme(plot.title=element_text(hjust=0.5)) +xlab("Pr(Y=1)")
+
+
 
 
 # Random Forest End
 #==========================================================
 
 #age distribution
-ggplot(data=cs-training,aes(x=age))+geom_bar()+
+ggplot(data=training,aes(x=age))+geom_bar()+
   ggtitle("Age distribution")+theme(plot.title=element_text(hjust=0.5))
 
 #debtratio distribution
-ggplot(data=cs-training,aes(x=log2(DebtRatio)))+geom_density()
+ggplot(data=training,aes(x=log2(DebtRatio)))+geom_density()+
+  ggtitle("debtratio")+theme(plot.title=element_text(hjust=0.5))
 
 #income distrubution
-ggplot(data=cs-training,aes(x=MonthlyIncome))+geom_density()
+ggplot(data=training,aes(x=MonthlyIncome))+geom_density()+
+  ggtitle("Age distribution")+theme(plot.title=element_text(hjust=0.5))
        
