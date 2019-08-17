@@ -151,6 +151,11 @@ ggplot(data=training,aes(x=log2(DebtRatio)))+geom_density()+
   ggtitle("debtratio")+theme(plot.title=element_text(hjust=0.5))
 
 #income distrubution
+<<<<<<< HEAD
 ggplot(data=training,aes(x=log10(MonthlyIncome)))+geom_histogram()+
   ggtitle("MonthlyIncome")+theme(plot.title=element_text(hjust=0.5))
+=======
+ggplot(data=training,aes(x=MonthlyIncome))+geom_density()+
+  ggtitle("Age distribution")+theme(plot.title=element_text(hjust=0.5))
+>>>>>>> edadb5a2c109e62136e2c33e41b99249210c8e61
        
